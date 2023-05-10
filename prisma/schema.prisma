@@ -21,18 +21,31 @@ enum Role {
 }
 
 model Dog {
-  id         String    @id @default(uuid())
-  name       String?
-  sex        Sex
-  race       String
-  color      String
-  birth      DateTime?
-  microchip  String?   @unique
-  created_at DateTime  @default(now())
-  updated_at DateTime  @default(now())
-  Reserve    Reserve?
-  Litter     Litter[]
-  Litter     Litter[]
+  id        String    @id @default(uuid())
+  name      String?
+  sex       Sex
+  race      String
+  color     String
+  birth     DateTime?
+  microchip String?   @unique
+  price     Int
+  breeder   Boolean   @default(false)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+
+  reserve Reserve?
+
+  image Image[]
+
+  father_litters   Litter[] @relation(name: "father_relation")
+  father_litter_id String[]
+
+  mother_litters   Litter[] @relation(name: "mother_relation")
+  mother_litter_id String[]
+
+  Litter    Litter? @relation(fields: [litter_id], references: [id])
+  litter_id String?
 
   @@map("dogs")
 }
@@ -45,11 +58,15 @@ model Litter {
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
 
-  father Dog @relation(fields: [father_id], references: [id])
-  mother Dog @relation(fields: [mother_id], references: [id])
+  image Image[]
 
-  mother_id String
-  father_id String
+  father    Dog    @relation(name: "father_relation", fields: [father_id], references: [id])
+  father_id String @unique
+
+  mother    Dog    @relation(name: "mother_relation", fields: [mother_id], references: [id])
+  mother_id String @unique
+
+  dog Dog[]
 
   @@map("litters")
 }
@@ -81,10 +98,21 @@ model Reserve {
   updated_at DateTime  @default(now())
 
   User    User?   @relation(fields: [user_id], references: [id])
-  user_id String?
+  user_id String? @unique
 
   dog    Dog    @relation(fields: [dog_id], references: [id])
   dog_id String @unique
 
   @@map("reservations")
+}
+
+model Image {
+  id         String   @id @default(uuid())
+  url        String
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  Dog        Dog?     @relation(fields: [dogId], references: [id])
+  dogId      String?
+  Litter     Litter?  @relation(fields: [litter_id], references: [id])
+  litter_id  String?
 }
