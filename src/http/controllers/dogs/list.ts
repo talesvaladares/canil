@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { makeListDogsDogUseCase } from '@/use-cases/factories/make-list-dogs-use-case';
+import { makeListDogsDogUseCase } from '@/use-cases/dogs/factories/make-list-dogs-use-case';
 
 export async function list(
   request: FastifyRequest,

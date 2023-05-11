@@ -1,7 +1,7 @@
 import { z as zod } from 'zod';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { makeRegisterDogUseCase } from '@/use-cases/factories/make-dog-use-case';
-import { DogAlreadyExistsError } from '@/use-cases/errors/dog-already-exists-error';
+import { makeRegisterDogUseCase } from '@/use-cases/dogs/factories/make-dog-use-case';
+import { DogAlreadyExistsError } from '@/use-cases/dogs/errors/dog-already-exists-error';
 
 export async function register(
   request: FastifyRequest,
@@ -11,7 +11,7 @@ export async function register(
     name: zod.string(),
     sex: zod.enum(['male', 'female']),
     color: zod.string(),
-    birth: zod.date().nullable(),
+    birth: zod.string().nullable(),
     microchip: zod.string().nullable(),
     price: zod.number(),
     breeder: zod.boolean().default(false),
@@ -32,8 +32,11 @@ export async function register(
   try {
     const registerUseCase = makeRegisterDogUseCase();
 
+    const birthDate = birth === null || birth === undefined ? null : new Date(birth);
+
+
     await registerUseCase.execute({
-      birth,
+      birth: birthDate,
       breeder,
       color,
       microchip,

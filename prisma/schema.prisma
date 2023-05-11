@@ -61,12 +61,12 @@ model Litter {
   image Image[]
 
   father    Dog    @relation(name: "father_relation", fields: [father_id], references: [id])
-  father_id String @unique
+  father_id String
 
   mother    Dog    @relation(name: "mother_relation", fields: [mother_id], references: [id])
-  mother_id String @unique
+  mother_id String
 
-  dog Dog[]
+  dogs Dog[]
 
   @@map("litters")
 }
