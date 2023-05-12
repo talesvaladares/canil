@@ -26,4 +26,44 @@ export class PrismaReservationsRepository implements ReservationsRepository {
 
     return reserve;
   }
+
+  async deliver(reserve_id: string): Promise<void> {
+    
+    await prisma.reserve.update({
+      where: {
+        id: reserve_id
+      },
+      data: {
+        delivered: new Date()
+      }
+    });
+  }
+
+  async list(): Promise<Reserve[]> {
+    const reservations =  await prisma.reserve.findMany();
+
+    return reservations;
+  }
+
+  async listDelivered(): Promise<Reserve[]> {
+    const reservations =  await prisma.reserve.findMany({
+      where: {
+        delivered: {
+          not: null
+        }
+      }
+    });
+
+    return reservations;
+  }
+
+  async listDoesNotDeliver(): Promise<Reserve[]> {
+    const reservations =  await prisma.reserve.findMany({
+      where: {
+        delivered: null
+      }
+    });
+
+    return reservations;
+  }
 }
