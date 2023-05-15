@@ -1,6 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { register } from "./register";
 import { verifyJWT } from "@/http/middlewares/verify-jwt";
+import { verifyUserRolePermissionLevel } from '../../middlewares/verify-user-role-permission-level'
 import { deliver } from "./deliver";
 import { listDelivered } from './list-delivered';
 import { listDoesDelivered } from './list-does-delivered';
@@ -12,9 +13,9 @@ export async function reservationsRoutes(app: FastifyInstance ) {
   // o onRequest executa antes do restante da rota
   // verificando se existe um jwt válido
   app.post('/reservations', { onRequest: [verifyJWT] }, register);
-  app.patch('/reservations/deliver', { onRequest: [verifyJWT] }, deliver);
+  app.patch('/reservations/deliver', { onRequest: [verifyJWT, verifyUserRolePermissionLevel({permissionLevel: 2})] }, deliver);
 
-  app.get('/reservations', { onRequest: [verifyJWT] }, list);
-  app.get('/reservations/delivered', { onRequest: [verifyJWT] }, listDelivered);
-  app.get('/reservations/does-not-delivered', { onRequest: [verifyJWT] }, listDoesDelivered);
+  app.get('/reservations', { onRequest: [verifyJWT, verifyUserRolePermissionLevel({permissionLevel: 2})] }, list);
+  app.get('/reservations/delivered', { onRequest: [verifyJWT, verifyUserRolePermissionLevel({permissionLevel: 2})] }, listDelivered);
+  app.get('/reservations/does-not-delivered', { onRequest: [verifyJWT, verifyUserRolePermissionLevel({permissionLevel: 2})] }, listDoesDelivered);
 }
